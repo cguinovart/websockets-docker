@@ -1,0 +1,33 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="utf-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no")
+    link(rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous")
+    title Hello, world!
+  body
+    nav.navbar.navbar-light.navbar-expand-md.bg-faded.justify-content-center
+      a.navbar-brand.d-flex.w-50.mr-auto(href="/") Home
+      button.navbar-toggler(type="button" data-toggle="collapse" data-target="#collapsingNavbar3")
+        span.navbar-toggler-icon
+      #collapsingNavbar3.navbar-collapse.collapse.w-100
+        ul.nav.navbar-nav.ml-auto.w-100.justify-content-end
+          li.nav-item
+            a.nav-link(href="/login") Login
+          li.nav-item
+            a.nav-link(href="/registre") Registre
+    .container
+      h1.display-3.text-center Registre
+      br
+      form(action="/registre" method="post")
+        .input-group.mb-3
+          input.form-control(type="text" aria-label="Text input with checkbox" placeholder="Nom" name="nom")
+        .input-group.mb-3
+          input.form-control(type="password" aria-label="Text input with radio button" placeholder="Contrasenya" name="password")
+        .input-group.mb-3
+          input.form-control(type="password" aria-label="Text input with radio button" placeholder="Repeteix Contrasenya" name="password2")
+          br
+          button.btn.btn-primary(type="submit") Registra't
+    script(src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous")
+    script(src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous")

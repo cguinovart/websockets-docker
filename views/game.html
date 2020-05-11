@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+        td {
+            width: 50px;
+            height: 50px;
+            padding: 0px;
+            border: 1px solid #aaaaaa;
+            margin: 0px;
+            text-align: center;
+        }
+
+        #tablero {
+            padding-left: 10em;
+        }
+    </style>
+    <script>
+        var tablerodejuego = [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        ]
+        var colors = ["#ff0000", "#33cc33", "#3366ff", "#ffff00"];
+        var aleatori = Math.floor(Math.random() * (colors.length));
+        var color_player = colors[aleatori];
+        var contador = 0;
+        var puntos = 0;
+
+        function ini() {
+            var socket = io.connect('http://localhost:3000');
+            tablero();
+            var button = document.getElementById("enviar");
+            var output = document.getElementById("output");
+            var tabla = document.getElementById("tablero");
+            tabla.addEventListener("click", juego, false);
+            socket.on('message', function (data) {
+                //    console.log(data.message);
+                var row = data.message.substring(7, 8);
+                var col = data.message.substring(8, 9);
+                if (tablerodejuego[row][col] == 0) {
+                    document.getElementById(data.message).style.background = data.color;
+                    tablerodejuego[row][col] = 1;
+
+                    //      console.log(puntos);
+                }
+                if (contador == 99) {
+                    document.getElementById("marcador").innerHTML = "<h1 class=\"display-3 text-center\">Partida Acabada</h1>";
+                    tabla.removeEventListener("click", juego, false);
+                    console.log("Puntos finales: " + puntos);
+                } else {
+                    contador++;
+                    console.log("contador del server: " + contador);
+                }
+
+            });
+        }
+
+        function tablero() {
+            var mitabla = document.getElementById("tablero");
+            var thetabla = document.createElement("table");
+            var mitblBody = document.createElement("tbody");
+            for (var i = 0; i < 10; i++) {
+                var mihilera = document.createElement("tr");
+                for (var j = 0; j < 10; j++) {
+                    var micelda = document.createElement("td");
+                    mihilera.appendChild(micelda);
+                    micelda.className += "micasilla";
+                    micelda.id = "micelda" + i + j;
+                }
+                mitblBody.appendChild(mihilera);
+            }
+            thetabla.appendChild(mitblBody);
+            mitabla.appendChild(thetabla);
+        }
+
+        function juego(e) {
+            var socket = io()
+            var linia = e.target.id.substring(7, 8);
+            var columna = e.target.id.substring(8, 9);
+            var row = parseInt(linia);
+            var col = parseInt(columna);
+            document.getElementById("marcador").innerHTML = "<h1 class=\"display-3 text-center\">WebSockets</h1>";
+            //  console.log(e.target.id);
+            //  console.log(tablerodejuego);
+            if (tablerodejuego[row][col] == 0) {
+                socket.emit('message', {
+                    message: e.target.id,
+                    color: color_player
+                });
+                puntos++;
+                console.log("Puntos: " + puntos);
+            } else {
+
+                document.getElementById("marcador").innerHTML = "<h1 class=\"display-3 text-center\" style=\"color:red;\">Ya has tocat aqui</h1>";
+            }
+            if (contador == 98) {
+                if (puntos > 50) {
+                    socket.emit('puntuacio', {
+                        "resultat": "victoria",
+
+                    });
+                    console.log("Victoria");
+
+                } else {
+                    socket.emit('puntuacio', {
+                        "resultat": "derrota",
+
+                    });
+                    console.log("Derrota");
+
+                }
+
+            } else {
+
+                console.log("contador: " + contador);
+            }
+
+
+        }
+        window.addEventListener("load", ini, false);
+    </script>
+    <title>Joc de Pintar</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-light navbar-expand-md bg-faded justify-content-center"><a
+            class="navbar-brand d-flex w-50 mr-auto" href="/">Home</a><button class="navbar-toggler" type="button"
+            data-toggle="collapse" data-target="#collapsingNavbar3"><span class="navbar-toggler-icon"></span></button>
+        <div class="navbar-collapse collapse w-100" id="collapsingNavbar3"></div>
+    </nav>
+    <div class="container">
+        <h1 class="display-1 text-center" id="h1">Game</h1>
+        <div id="marcador">
+            <h1 class="display-3 text-center">WebSockets</h1>
+        </div>
+        <div id="tablero"></div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
